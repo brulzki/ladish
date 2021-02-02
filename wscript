@@ -2,8 +2,8 @@
 # encoding: utf-8
 
 import os
-import Options
-import Utils
+from waflib import Options
+from waflib import Utils
 import shutil
 import re
 import waflib
@@ -20,7 +20,7 @@ RELEASE = False
 top = '.'
 out = 'build'
 
-from Logs import pprint
+from waflib.Logs import pprint
 
 def display_msg(conf, msg="", status = None, color = None):
     if status:
@@ -240,10 +240,10 @@ def configure(conf):
                     #print "optimize force enable is required"
                     if not check_gcc_optimizations_enabled(conf.env['CFLAGS']):
                         if Options.options.debug:
-                            print "C optimization must be forced in order to enable -Wuninitialized"
-                            print "However this will not be made because debug compilation is enabled"
+                            print("C optimization must be forced in order to enable -Wuninitialized")
+                            print("However this will not be made because debug compilation is enabled")
                         else:
-                            print "C optimization forced in order to enable -Wuninitialized"
+                            print("C optimization forced in order to enable -Wuninitialized")
                             conf.env.append_unique('CFLAGS', "-O")
         except:
             pass
@@ -343,7 +343,7 @@ def git_ver(self):
 
 def build(bld):
     if not bld.env['DATA_DIR']:
-        raise "DATA_DIR is emtpy"
+        raise waflib.Errors.WafError("DATA_DIR is emtpy")
 
     bld(rule=git_ver, target='version.h', update_outputs=True, always=True, ext_out=['.h'])
 
@@ -637,10 +637,10 @@ def build(bld):
         # GtkBuilder UI definitions (XML)
         bld.install_files('${DATA_DIR}', 'gui/gladish.ui')
 
-    bld.install_files('${PREFIX}/bin', 'ladish_control', chmod=0755)
+    bld.install_files('${PREFIX}/bin', 'ladish_control', chmod=0o755)
 
     # 'Desktop' file (menu entry, icon, etc)
-    bld.install_files('${PREFIX}/share/applications/', 'gui/gladish.desktop', chmod=0644)
+    bld.install_files('${PREFIX}/share/applications/', 'gui/gladish.desktop', chmod=0o644)
 
     # Icons
     icon_sizes = ['16x16', '22x22', '24x24', '32x32', '48x48', '256x256']
